@@ -1,4 +1,4 @@
-var c, ctx, size, grow, x, y, dx, dy, animationId, running, whichAnimation;
+var c, ctx, size, grow, x, y, dx, dy, dvdLogo, animationId, running, whichAnimation;
 
 function main() {
     c = document.getElementById("theCanvas");
@@ -13,6 +13,9 @@ function main() {
     dy = Math.random()*2 + 1;
     running = false;
     whichAnimation = 0;
+
+    dvdLogo = new Image();
+    dvdLogo.src = "dvd_logo.png";
 
     drawCircle();
 }
@@ -57,7 +60,51 @@ function startAnim2() {
 function anim2() {
     x += dx;
     y += dy;
-    
+
+    if (x - 50 < 0 || x + 50 > 600) {
+        dx *= -1;
+        if (x - 50 < 0) {
+            x = 50;
+        } else {
+            x = 600 - 50;
+        }
+        console.log(corners());
+    }
+    if (y - 25 < 0 || y + 25 > 600) {
+        dy *= -1;
+        if (y - 25 < 0) {
+            y = 25;
+        } else {
+            y = 600 - 25;
+        }
+        console.log(corners());
+    }
+
+    ctx.clearRect(0, 0, 600, 600);
+    drawDVD();
+
+    animationId = window.requestAnimationFrame(anim2);
+}
+
+function corners() {
+    var d0 = dist(x - 50, y - 25, 0, 0);
+    var d1 = dist(x + 50, y - 25, 500, 0);
+    var d2 = dist(x - 50, y + 25, 0, 500);
+    var d3 = dist(x + 50, y + 25, 500, 500);
+    console.log(`${d0} ${d1} ${d2} ${d3}`);
+    return d0 < d1 < d2 < d3 ? d0 : d1 < d2 < d3 ? d1 : d2 < d2 ? d3 : d3;
+}
+
+function dist(x0, y0, x1, y1) {
+    var deltaX = x1 - x0;
+    var deltaY = y1 - y0;
+    return Math.sqrt( deltaX**2 + deltaY**2 );
+}
+
+function anim2_circle() {
+    x += dx;
+    y += dy;
+
     if (x - size < 0 || x + size > 600) {
         dx *= -1;
         if (x - size < 0) {
@@ -77,7 +124,7 @@ function anim2() {
 
     ctx.clearRect(0, 0, 600, 600);
     drawCircle();
-    
+
     animationId = window.requestAnimationFrame(anim2);
 }
 
@@ -85,6 +132,10 @@ function drawCircle() {
     ctx.beginPath();
     ctx.arc(x, y, size, 0, Math.PI * 2);
     ctx.fill();
+}
+
+function drawDVD() {
+    ctx.drawImage(dvdLogo, x - 50, y - 25, 100, 50);
 }
 
 function stopAnim() {
